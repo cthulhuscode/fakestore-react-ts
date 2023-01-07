@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { MdShoppingCart } from "react-icons/md";
+import { ProductContext } from "../../context/products/ProductState";
+import { useContext } from "react";
 
 const Container = styled.header`
   position: sticky;
@@ -43,9 +45,11 @@ const Container = styled.header`
 `;
 
 export const Header = () => {
+  const { showCart, toggleCart } = useContext(ProductContext)!;  
+
   return <Container>
     <h1>Fakestore</h1>    
-    <button>
+    <button onClick={() => toggleCart!(!showCart)}>
       <MdShoppingCart className="icon"/>
     </button>
   </Container>

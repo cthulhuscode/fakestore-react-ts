@@ -53,7 +53,7 @@ const CartElement = styled.div`
 `;
 
 export const Cart = () => {
-  const { cart } = useContext(ProductContext)!;  
+  const { cart, showCart } = useContext(ProductContext)!;  
 
   const totalPrice = 
     cart && 
@@ -62,7 +62,7 @@ export const Cart = () => {
       .reduce((acc, val) => acc + val[1].totalPrice, 0);
 
   return <>  
-    <CartElement>   
+    <CartElement style={{display: `${showCart ? "unset" : "none"}`}}>   
       <div className="cart-container">
         <h1 className="cart-title">Shopping Cart</h1>
         { cart && Object.entries(cart).map((product) => <CartProduct key={product[1].product.id} cartItem={product[1]} />) }

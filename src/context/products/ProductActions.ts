@@ -2,6 +2,7 @@ import { IProduct } from "../../interfaces/IProduct";
 
 export enum ActionTypes {
   GET_PRODUCTS = "GET_PRODUCTS",
+  SHOW_CART = "SHOW_CART",
   ADD_PRODUCT_TO_CART = "ADD_PRODUCT_TO_CART",
   DELETE_PRODUCT_FROM_CART = "DELETE_PRODUCT_FROM_CART",
 }
@@ -10,28 +11,31 @@ export const getProducts = (
   products: IProduct[]
 ): {
   type: ActionTypes.GET_PRODUCTS;
-  payload: {
-    products: IProduct[];
-  };
+  payload: IProduct[];
 } => ({
   type: ActionTypes.GET_PRODUCTS,
-  payload: {
-    products,
-  },
+  payload: products,
+});
+
+export const showCart = (
+  showCart: boolean
+): {
+  type: ActionTypes.SHOW_CART;
+  payload: boolean;
+} => ({
+  type: ActionTypes.SHOW_CART,
+  payload: showCart,
 });
 
 export const addProductToCart = (
-  id: number
+  id: number,
+  quantity: number
 ): {
   type: ActionTypes.ADD_PRODUCT_TO_CART;
-  payload: {
-    id: number;
-  };
+  payload: { id: number; quantity: number };
 } => ({
   type: ActionTypes.ADD_PRODUCT_TO_CART,
-  payload: {
-    id,
-  },
+  payload: { id, quantity },
 });
 
 export const deleteProductFromCart = (
@@ -50,5 +54,6 @@ export const deleteProductFromCart = (
 
 export type Action =
   | ReturnType<typeof getProducts>
+  | ReturnType<typeof showCart>
   | ReturnType<typeof addProductToCart>
   | ReturnType<typeof deleteProductFromCart>;

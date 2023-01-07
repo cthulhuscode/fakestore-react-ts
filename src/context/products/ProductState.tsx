@@ -6,20 +6,23 @@ import { IProduct } from "../../interfaces/IProduct";
 
 interface IProductContext {
   products: IProduct[];
-  cart: IProduct[];
+  cart: {[id: number]: {product: IProduct, quantity: number}} | null;
+  showCart: boolean;
+  toggleCart?: (showCart: boolean) => void;
   getProducts?: () => Promise<void>;
-  addProductToCart?: (id: number) => void;
+  addProductToCart?: (id: number, quantity: number) => void;
   deleteProductFromCart?: (id: number) => void;
 }
 
 const initialState: IProductContext = {
   products: [],
-  cart: [],
+  cart: null,
+  showCart: false
 };
 
 export type Store = typeof initialState;
 
-const ProductContext = createContext<IProductContext | null>(initialState);
+export const ProductContext = createContext<IProductContext | null>(initialState);
 
 export const ProductProvider = ({children}:any) => {
   const [state, dispatch] = useReducer(ProductReducer, initialState);
@@ -37,10 +40,17 @@ export const ProductProvider = ({children}:any) => {
     }
   };
 
-  const addProductToCart = (id: number) => {
+  const toggleCart = (showCart: boolean) => {
+    dispatch({
+      type: ActionTypes.SHOW_CART,
+      payload: showCart
+    });
+  }
+
+  const addProductToCart = (id: number, quantity: number) => {    
     dispatch({
       type: ActionTypes.ADD_PRODUCT_TO_CART,
-      payload: { id },
+      payload:  {id: id, quantity},
     });
   };
 
@@ -55,6 +65,8 @@ export const ProductProvider = ({children}:any) => {
     value={{
       products: state.products,
       cart: state.cart,
+      showCart: state.showCart,
+      toggleCart,
       getProducts,
       addProductToCart,
       deleteProductFromCart

@@ -8,22 +8,55 @@ export default (state: Store, action: Action) => {
     case ActionTypes.GET_PRODUCTS:
       return {
         ...state,
-        products: action.payload.products,
+        products: action.payload,
+      };
+
+    case ActionTypes.SHOW_CART:
+      return {
+        ...state,
+        showCart: action.payload,
       };
 
     case ActionTypes.ADD_PRODUCT_TO_CART:
-      const { products, cart } = state;
+      const { id, quantity } = action.payload;
 
-      const product: IProduct = products.find(
-        (p: IProduct) => p.id === action.payload.id
-      )!;
+      if (!state.cart) {
+        const products = state.products;
+        const product: IProduct = products.find((p: IProduct) => p.id === id)!;
 
-      cart.push(product);
+        return {
+          ...state,
+          cart: { id: { product, quantity: 1 } },
+        };
+      } else if (state.cart![id]) {
+        return {
+          ...state,
+          cart: {
+            ...state.cart,
+            id: {
+              ...state.cart![id],
+              quantity: state.cart![id].quantity++,
+            },
+          },
+        };
+      } else {
+        const { products } = state;
 
-      return {
-        ...state,
-        cart: cart,
-      };
+        const product: IProduct = products.find((p: IProduct) => p.id === id)!;
+
+        const cart = {
+          ...state.cart,
+          id: {
+            product: product,
+            quantity: 1,
+          },
+        };
+
+        return {
+          ...state,
+          cart: cart,
+        };
+      }
 
     case ActionTypes.DELETE_PRODUCT_FROM_CART:
 

@@ -53,18 +53,19 @@ const Container = styled.div`
       font-size: 12px;
       width: 40px;
       height: 50px;
-
+      
       display: flex;
       justify-items:center ;
       align-items: center;      
       flex-direction: column;
       gap: 5px;
-
+      
       input{
         width: 100%;
         height: 100%;
         text-align: center;
         border: 1px solid #ccc;
+        border-radius: 5px;
       }
 
       input:active, input:focus{
@@ -108,6 +109,10 @@ export const Product = ({product}: ProductProps)  => {
   const { addProductToCart } = useContext(ProductContext)!;
   const [quantity, setQuantity] = useState(1);  
 
+  const handleQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuantity(parseInt(e.target.value));
+  }
+
   return (
     <Container>
       <img src={image} alt={title} />
@@ -118,7 +123,7 @@ export const Product = ({product}: ProductProps)  => {
         <div className="buying">
           <div className="quantity">
             <label htmlFor="quantity">Quantity</label>
-            <input type="number" id="quantity" name="quantity" min="1" placeholder="1"/>
+            <input type="number" id="quantity" name="quantity" min="1" placeholder="1" value={quantity} onChange={(e) => handleQuantity(e)}/>
           </div>
 
           <button onClick={() => addProductToCart?.(id, quantity)}>

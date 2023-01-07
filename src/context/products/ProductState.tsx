@@ -6,7 +6,7 @@ import { IProduct } from "../../interfaces/IProduct";
 
 interface IProductContext {
   products: IProduct[];
-  cart: {[id: number]: {product: IProduct, quantity: number}} | null;
+  cart: {[key: number]: {product: IProduct, quantity: number}} | null;
   showCart: boolean;
   toggleCart?: (showCart: boolean) => void;
   getProducts?: () => Promise<void>;
@@ -47,7 +47,7 @@ export const ProductProvider = ({children}:any) => {
     });
   }
 
-  const addProductToCart = (id: number, quantity: number) => {    
+  const addProductToCart = (id: number, quantity: number) => {        
     dispatch({
       type: ActionTypes.ADD_PRODUCT_TO_CART,
       payload:  {id: id, quantity},

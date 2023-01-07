@@ -18,6 +18,7 @@ const Container = styled.header`
     height: 40px;
     background-color: #daa520;	
     cursor: pointer;
+    border-radius: 8px;
 
     display: flex;
     align-items: center;

@@ -19,42 +19,40 @@ export default (state: Store, action: Action) => {
 
     case ActionTypes.ADD_PRODUCT_TO_CART:
       const { id, quantity } = action.payload;
+      const { products, cart } = state;
+      const product: IProduct = products.find((p: IProduct) => p.id === id)!;
 
-      if (!state.cart) {
-        const products = state.products;
-        const product: IProduct = products.find((p: IProduct) => p.id === id)!;
+      // If cart is null
+      if (!cart) {
+        const newCart: {
+          [key: number]: { product: IProduct; quantity: number };
+        } = {};
+        newCart[id] = { product, quantity: quantity };
 
         return {
           ...state,
-          cart: { id: { product, quantity: 1 } },
+          cart: newCart,
         };
-      } else if (state.cart![id]) {
+
+        // If cart already has the same product
+      } else if (cart[id]) {
+        const modifiedCart = {
+          ...cart[id],
+          quantity: cart[id].quantity + quantity,
+        };
+
         return {
           ...state,
-          cart: {
-            ...state.cart,
-            id: {
-              ...state.cart![id],
-              quantity: state.cart![id].quantity++,
-            },
-          },
+          cart: { ...cart, [id]: modifiedCart },
         };
+
+        // If cart doesn't have the product yet
       } else {
-        const { products } = state;
-
-        const product: IProduct = products.find((p: IProduct) => p.id === id)!;
-
-        const cart = {
-          ...state.cart,
-          id: {
-            product: product,
-            quantity: 1,
-          },
-        };
+        const newCartItem = { product, quantity: quantity };
 
         return {
           ...state,
-          cart: cart,
+          cart: { ...cart, [id]: newCartItem },
         };
       }
 

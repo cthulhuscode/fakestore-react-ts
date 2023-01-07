@@ -5,6 +5,7 @@ export enum ActionTypes {
   SHOW_CART = "SHOW_CART",
   ADD_PRODUCT_TO_CART = "ADD_PRODUCT_TO_CART",
   DELETE_PRODUCT_FROM_CART = "DELETE_PRODUCT_FROM_CART",
+  CHANGE_CART_PRODUCT_QUANTITY = "CHANGE_CART_PRODUCT_QUANTITY",
 }
 
 export const getProducts = (
@@ -27,6 +28,17 @@ export const showCart = (
   payload: showCart,
 });
 
+export const changeCartProductQuantity = (
+  id: number,
+  quantity: number
+): {
+  type: ActionTypes.CHANGE_CART_PRODUCT_QUANTITY;
+  payload: { id: number; quantity: number };
+} => ({
+  type: ActionTypes.CHANGE_CART_PRODUCT_QUANTITY,
+  payload: { id, quantity },
+});
+
 export const addProductToCart = (
   id: number,
   quantity: number
@@ -42,18 +54,15 @@ export const deleteProductFromCart = (
   id: number
 ): {
   type: ActionTypes.DELETE_PRODUCT_FROM_CART;
-  payload: {
-    id: number;
-  };
+  payload: number;
 } => ({
   type: ActionTypes.DELETE_PRODUCT_FROM_CART,
-  payload: {
-    id,
-  },
+  payload: id,
 });
 
 export type Action =
   | ReturnType<typeof getProducts>
   | ReturnType<typeof showCart>
+  | ReturnType<typeof changeCartProductQuantity>
   | ReturnType<typeof addProductToCart>
   | ReturnType<typeof deleteProductFromCart>;

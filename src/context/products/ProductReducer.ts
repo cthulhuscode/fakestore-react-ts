@@ -17,17 +17,41 @@ export default (state: Store, action: Action) => {
         showCart: action.payload,
       };
 
-    case ActionTypes.ADD_PRODUCT_TO_CART:
-      const { id, quantity } = action.payload;
-      const { products, cart } = state;
-      const product: IProduct = products.find((p: IProduct) => p.id === id)!;
+    case ActionTypes.CHANGE_CART_PRODUCT_QUANTITY:
+      const cartProduct: IProduct = state.products.find(
+        (p: IProduct) => p.id === action.payload.id
+      )!;
 
+      const cartProductModified = {
+        ...state.cart![action.payload.id],
+        quantity: action.payload.quantity,
+        totalPrice: action.payload.quantity * cartProduct.price,
+      };
+
+      return {
+        ...state,
+        cart: { ...state.cart, [action.payload.id]: cartProductModified },
+      };
+
+    case ActionTypes.ADD_PRODUCT_TO_CART:
       // If cart is null
-      if (!cart) {
+      if (!state.cart) {
+        const { products } = state;
+        const { id, quantity } = action.payload;
+        const product: IProduct = products.find((p: IProduct) => p.id === id)!;
+
         const newCart: {
-          [key: number]: { product: IProduct; quantity: number };
+          [key: number]: {
+            product: IProduct;
+            quantity: number;
+            totalPrice: number;
+          };
         } = {};
-        newCart[id] = { product, quantity: quantity };
+        newCart[id] = {
+          product,
+          quantity: quantity,
+          totalPrice: quantity * product.price,
+        };
 
         return {
           ...state,
@@ -35,10 +59,15 @@ export default (state: Store, action: Action) => {
         };
 
         // If cart already has the same product
-      } else if (cart[id]) {
+      } else if (state.cart[action.payload.id]) {
+        const { cart, products } = state;
+        const { id, quantity } = action.payload;
+        const product: IProduct = products.find((p: IProduct) => p.id === id)!;
+
         const modifiedCart = {
-          ...cart[id],
-          quantity: cart[id].quantity + quantity,
+          ...cart![id],
+          quantity: cart![id].quantity + quantity,
+          totalPrice: (cart![id].quantity + quantity) * product.price,
         };
 
         return {
@@ -48,7 +77,14 @@ export default (state: Store, action: Action) => {
 
         // If cart doesn't have the product yet
       } else {
-        const newCartItem = { product, quantity: quantity };
+        const { products, cart } = state;
+        const { id, quantity } = action.payload;
+        const product: IProduct = products.find((p: IProduct) => p.id === id)!;
+        const newCartItem = {
+          product,
+          quantity: quantity,
+          totalPrice: quantity * product.price,
+        };
 
         return {
           ...state,
@@ -57,6 +93,12 @@ export default (state: Store, action: Action) => {
       }
 
     case ActionTypes.DELETE_PRODUCT_FROM_CART:
+      const newCart = state.cart!;
+      delete newCart[action.payload];
+      return {
+        ...state,
+        cart: newCart,
+      };
 
     default:
       return state;

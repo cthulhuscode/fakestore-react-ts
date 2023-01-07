@@ -113,6 +113,8 @@ export const Product = ({product}: ProductProps)  => {
     setQuantity(parseInt(e.target.value));
   }
 
+  
+
   return (
     <Container>
       <img src={image} alt={title} />

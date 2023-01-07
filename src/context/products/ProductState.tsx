@@ -6,9 +6,10 @@ import { IProduct } from "../../interfaces/IProduct";
 
 interface IProductContext {
   products: IProduct[];
-  cart: {[key: number]: {product: IProduct, quantity: number}} | null;
+  cart: {[key: number]: {product: IProduct, quantity: number, totalPrice: number}} | null;
   showCart: boolean;
   toggleCart?: (showCart: boolean) => void;
+  changeCartProductQuantity?: (id: number, quantity: number) => void
   getProducts?: () => Promise<void>;
   addProductToCart?: (id: number, quantity: number) => void;
   deleteProductFromCart?: (id: number) => void;
@@ -47,6 +48,13 @@ export const ProductProvider = ({children}:any) => {
     });
   }
 
+  const changeCartProductQuantity = (id: number, quantity: number) => {
+    dispatch({
+      type: ActionTypes.CHANGE_CART_PRODUCT_QUANTITY,
+      payload: {id, quantity}
+    });
+  }
+
   const addProductToCart = (id: number, quantity: number) => {        
     dispatch({
       type: ActionTypes.ADD_PRODUCT_TO_CART,
@@ -57,7 +65,7 @@ export const ProductProvider = ({children}:any) => {
   const deleteProductFromCart = (id: number) => {
     dispatch({
       type: ActionTypes.DELETE_PRODUCT_FROM_CART,
-      payload: { id },
+      payload: id,
     });
   };
 
@@ -67,6 +75,7 @@ export const ProductProvider = ({children}:any) => {
       cart: state.cart,
       showCart: state.showCart,
       toggleCart,
+      changeCartProductQuantity,
       getProducts,
       addProductToCart,
       deleteProductFromCart
